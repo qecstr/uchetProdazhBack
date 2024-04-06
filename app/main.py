@@ -21,7 +21,7 @@ from starlette.middleware.cors import CORSMiddleware
 app = FastAPI()
 Models.Base.metadata.create_all(bind=engine)
 finances = sql.Table('Finances', sql.MetaData(), autoload_with=engine)
-app.include_router(router, prefix="all other", tags=[""])
+app.include_router(router, prefix="", tags=[""])
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

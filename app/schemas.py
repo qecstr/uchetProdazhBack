@@ -19,7 +19,8 @@ class EmployeesJson(BaseModel):
 class ServiceJson(BaseModel):
     name: str
     sum: float
-
+    operation_type: str
+    time: int
 
 class ZapisJson(BaseModel):
     operation_type: str

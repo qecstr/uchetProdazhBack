@@ -8,7 +8,7 @@ def getAll(db: Session):
     return db.query(Services).all()
 
 def createService(json:ServiceJson,db: Session):
-    service = Services(name = json.name,sum = json.sum)
+    service = Services(name = json.name,sum = json.sum,operation_type = json.operation_type,time = json.time)
     db.add(service)
     db.commit()
     db.refresh(service)
@@ -17,6 +17,8 @@ def updateService(json:ServiceJson,db: Session,id: int):
     service = getById(db,id)
     service.name = json.name
     service.sum = json.sum
+    service.operation_type = json.operation_type
+    service.time = json.time
     db.commit()
     db.refresh(service)
 

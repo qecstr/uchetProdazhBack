@@ -59,7 +59,7 @@ async def deleteCalendar(id:int,db:db_dependency):
 async def getAllServices(db:db_dependency):
     return crudServices.getAll(db)
 @router.post("/services/update/{id}")
-async def updateServices(services:Services, db:db_dependency, service_id:int):
+async def updateServices(services:ServiceJson, db:db_dependency, service_id:int):
     return crudServices.updateService(services, db,service_id)
 @router.delete("/services/delete/{id}")
 async def deleteServices(db:db_dependency,service_id:int):

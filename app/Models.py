@@ -21,8 +21,11 @@ class Employees(Base):
 class Services(Base):
     __tablename__ = 'Services'
     id = Column(Integer,primary_key=True,index=True)
+    operation_type = Column(types.TEXT,index=True)
     name = Column(types.TEXT,index=True)
     sum = Column(types.DOUBLE_PRECISION,index=True)
+    time = Column(Integer,index=True)
+
 class Calendar(Base):
     __tablename__ = 'Calendar'
     id = Column(Integer,primary_key=True,index=True)
