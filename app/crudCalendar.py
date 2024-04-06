@@ -17,6 +17,13 @@ def create(zapis:ZapisJson,db:Session):
     db.add(db_emp)
     db.commit()
     db.refresh(db_emp)
+    return db.query(Calendar).filter(
+        Calendar.operation_type == zapis.operation_type,
+        Calendar.name == zapis.name,
+        Calendar.sum == zapis.sum,
+        Calendar.date == zapis.date,
+        Calendar.comments == zapis.comments,
+        Calendar.time == zapis.time).first()
 
 def getAll(db:Session):
     result = []

@@ -12,6 +12,10 @@ def createService(json:ServiceJson,db: Session):
     db.add(service)
     db.commit()
     db.refresh(service)
+    return db.query(Services).filter(Services.name == json.name,
+                                     Services.sum == json.sum,
+                                     Services.operation_type == json.operation_type,
+                                     Services.time == json.time).first()
 
 def updateService(json:ServiceJson,db: Session,id: int):
     service = getById(db,id)
