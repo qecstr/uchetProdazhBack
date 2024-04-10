@@ -6,7 +6,8 @@ from fastapi.responses import HTMLResponse
 import sqlalchemy as sql
 from fastapi import FastAPI, Depends, WebSocket, WebSocketDisconnect
 from fastapi.openapi.models import Response
-from sqlalchemy.event import listens_for
+from sqlalchemy import event
+
 from sqlalchemy.future import select
 from pydantic import BaseModel
 
@@ -54,7 +55,7 @@ db_dependency = Annotated[Session, Depends(get_db)]
 async def create_finances(Finances: Finances, db: db_dependency):
     db_Finances = Models.Finances(date=Finances.date, operation_type=Finances.operation_type, sum=Finances.sum,
                                   sender=Finances.sender,
-                                  comment=Finances.comment, time = datetime.datetime.now().time())
+                                  comment=Finances.comment, time = datetime.datetime.now().time().strftime('%H:%M'))
     db.add(db_Finances)
     db.commit()
     db.refresh(db_Finances)
@@ -135,7 +136,7 @@ async def websocket_endpoint(websocket: WebSocket,db:db_dependency):
     except WebSocketDisconnect:
         manager.disconnect(websocket)
 
-@listens_for(Models.Finances, "after_insert")
+@event.listens_for(Models.Finances, "after_insert")
 async def after_data_insert(mapper, connection, target):
     new_data = target
     print(DTOtoJson(DTO(new_data)))
