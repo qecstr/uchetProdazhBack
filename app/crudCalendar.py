@@ -8,6 +8,7 @@ def getByid(id:int,db:Session):
     return db.query(Calendar).filter(Calendar.id == id).first()
 def create(zapis:ZapisJson,db:Session):
     db_emp = Calendar(
+
         operation_type = zapis.operation_type,
         name = zapis.name,
         sum = zapis.sum,
@@ -32,6 +33,7 @@ def getAll(db:Session):
         zapises = []
         for item in a:
             kk = ZapisJson(
+                id = item.id,
                 operation_type = item.operation_type,
                 name = item.name,
                 sum = item.sum,

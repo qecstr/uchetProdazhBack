@@ -23,6 +23,7 @@ class ServiceJson(BaseModel):
     time: int
 
 class ZapisJson(BaseModel):
+    id: int
     operation_type: str
     name: str
     sum: float
