@@ -149,12 +149,12 @@ def DTO(finances:Models.Finances)->WebSocketFinancesJson:
 def DTOtoJson(finances:WebSocketFinancesJson):
     data = json.dumps(
         {
-        "data": finances.date,
+        "data": str(finances.date),
         "operation_type":finances.operation_type,
         "sum": finances.sum,
         "sender": finances.sender,
         "comment": finances.comment,
-        "time": finances.time
+        "time": str(finances.time)
     }
     )
 
