@@ -58,6 +58,7 @@ async def create_finances(Finances: Finances, db: db_dependency):
     db.add(db_Finances)
     db.commit()
     db.refresh(db_Finances)
+    await after_data_insert(None, None, db_Finances)
     return  db.query(Models.Finances).filter(Models.Finances.date == Finances.date,
                                              Models.Finances.operation_type == Finances.operation_type,
                                              Models.Finances.sum == Finances.sum,
