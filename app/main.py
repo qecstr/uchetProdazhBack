@@ -67,7 +67,7 @@ async def create_finances(Finances: Finances, db: db_dependency):
 
 @app.get("/finances/{id}")
 async def get(id: int, db: db_dependency):
-   
+
     query = db.query(Models.Finances).filter(Models.Finances.id == id).first()
 
     return query
@@ -113,7 +113,7 @@ class ConnectionManager:
         async def broadcast(self,finances:WebSocketFinancesJson):
             for connection in self.active_connections:
 
-                await connection.send_json(finances)
+                await connection.send_json(DTOtoJson(finances))
 
 manager = ConnectionManager()
 @app.websocket("/finances/ws")
@@ -145,3 +145,16 @@ def DTO(finances:Models.Finances)->WebSocketFinancesJson:
         time = finances.time
     )
     return temp
+def DTOtoJson(finances:WebSocketFinancesJson):
+    data = json.dumps(
+        {
+        "data": finances.date,
+        "operation_type":finances.operation_type,
+        "sum": finances.sum,
+        "sender": finances.sender,
+        "comment": finances.comment,
+        "time": finances.time
+    }
+    )
+
+    return data
