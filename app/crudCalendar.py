@@ -14,7 +14,10 @@ def create(zapis:ZapisJsonForCreate,db:Session):
         sum = zapis.sum,
         date = zapis.date,
         comments = zapis.comments,
-        time = zapis.time)
+        time = zapis.time,
+        user_id = zapis.user_id
+
+    )
     db.add(db_emp)
     db.commit()
     db.refresh(db_emp)
@@ -24,11 +27,13 @@ def create(zapis:ZapisJsonForCreate,db:Session):
         Calendar.sum == zapis.sum,
         Calendar.date == zapis.date,
         Calendar.comments == zapis.comments,
-        Calendar.time == zapis.time).first()
+        Calendar.time == zapis.time,
+        Calendar.user_id == zapis.user_id
+    ).first()
 
-def getAll(db:Session):
+def getAll(db:Session,user_id:int):
     result = []
-    for emp in db.query(Calendar).all():
+    for emp in db.query(Calendar).filter(Calendar.user_id == user_id).all():
         a = db.query(Calendar).filter(Calendar.date == emp.date).all()
         zapises = []
         for item in a:
@@ -39,7 +44,8 @@ def getAll(db:Session):
                 sum = item.sum,
                 date = item.date,
                 comments = item.comments,
-                time = item.time
+                time = item.time,
+                user_id = item.user_id
             )
             zapises.append(kk)
         temp = CalendarJsonFinished(
@@ -62,6 +68,7 @@ def update(id:int,db:Session,zapis:ZapisJsonForCreate):
     temp.date = zapis.date,
     temp.comments = zapis.comments,
     temp.time = zapis.time
+
 
     db.commit()
     db.refresh(temp)

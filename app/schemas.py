@@ -15,13 +15,13 @@ class EmployeesJson(BaseModel):
     name: str
     surname: str
     speciality: str
-
+    user_id:int
 class ServiceJson(BaseModel):
     name: str
     sum: float
     operation_type: str
     time: int
-
+    user_id: int
 class ZapisJson(BaseModel):
     id: int
     operation_type: str
@@ -30,7 +30,7 @@ class ZapisJson(BaseModel):
     date: datetime.date
     comments: str
     time: datetime.time
-
+    user_id: int
 class ZapisJsonForCreate(BaseModel):
     operation_type: str
     name: str
@@ -38,6 +38,7 @@ class ZapisJsonForCreate(BaseModel):
     date: datetime.date
     comments: str
     time: datetime.time
+    user_id: int
 class CalendarJsonFinished(BaseModel):
     date: datetime.date
     Zapis: List[ZapisJson]
@@ -50,4 +51,15 @@ class WebSocketFinancesJson(BaseModel):
     comment: str
     time: datetime.time
 
+
+class usersRegJson(BaseModel):
+    email: str
+    password: str
+    name: str
+    surname: str
+
+
+class authUser(BaseModel):
+    email:str
+    password:str
 

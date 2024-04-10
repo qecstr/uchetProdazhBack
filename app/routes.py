@@ -1,7 +1,10 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi import APIRouter
 from typing import Annotated
 
+from starlette import status
+
+from app.schemas import usersRegJson , authUser
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 import app.crud as crud
@@ -12,7 +15,8 @@ from app.schemas import ZapisJson, ZapisJsonForCreate
 from app.schemas import ServiceJson
 import app.crudCalendar as crudCalendar
 import app.crudServices as crudServices
-
+import app.usersCrud as usersCrud
+from app.schemas import Response
 router = APIRouter()
 def get_db():
     db = SessionLocal()
@@ -32,9 +36,9 @@ async def getByIDEmployee(id:int,db:db_dependency):
 @router.post("/employee/create")
 async def createEmployee(emp:EmployeesJson,db:db_dependency):
     return crud.create(emp,db)
-@router.get("/employee/getAll")
-async def getAllEmployee(db:db_dependency):
-    return crud.getAll(db)
+@router.get("/employee/getAll/{user_id}")
+async def getAllEmployee(db:db_dependency,user_id:int):
+    return crud.getAll(db,user_id)
 @router.post("/employee/update/{id}")
 async def updateEmployee(emp:EmployeesJson,db:db_dependency,id:int):
     return crud.update(emp,db,id)
@@ -55,10 +59,10 @@ async def updateCalendar(zapis:ZapisJsonForCreate,db:db_dependency,id:int):
 async def deleteCalendar(id:int,db:db_dependency):
     return crudCalendar.delete(id,db)
 
-@router.get("/services/getAll")
+@router.get("/services/getAll/{user_id}")
 async def getAllServices(db:db_dependency):
     return crudServices.getAll(db)
-@router.post("/services/update/{service_id}")
+@router.post("/services/update/{service_id}/")
 async def updateServices(services:ServiceJson, db:db_dependency, service_id:int):
     return crudServices.updateService(services, db,service_id)
 @router.delete("/services/delete/{service_id}")
@@ -67,3 +71,25 @@ async def deleteServices(db:db_dependency,service_id:int):
 @router.post("/services/create")
 async def createServices(db:db_dependency, services:ServiceJson):
     return crudServices.createService(services,db)
+
+@router.post("/users/create")
+async def createUsers(user:usersRegJson,db:db_dependency):
+    usersCrud.create_user(user,db)
+
+@router.post("/users/auth")
+async def auth(user:authUser,db:db_dependency):
+    temp = usersCrud.authenticate_user(user,db)
+    if temp == 2:
+        return usersCrud.findUser(user,db)
+    elif temp == 1:
+        return HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Email is incorrect",
+
+    )
+    elif temp == 0:
+        return HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Password is incorrect",
+
+    )

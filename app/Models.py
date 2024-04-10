@@ -13,6 +13,7 @@ class Finances(Base):
     sender = Column(types.TEXT, index=True)
     comment = Column(types.TEXT, index=True)
     time = Column(types.TIME,index = True)
+    user_id = Column(Integer, index=True)
 class Employees(Base):
     __tablename__ = 'Employees'
     id = Column(Integer,primary_key=True,index=True)
@@ -20,6 +21,7 @@ class Employees(Base):
     surname = Column(types.TEXT,index = True)
     speciality = Column(types.TEXT,index=True)
     time = Column(types.TIME, index=True)
+    user_id = Column(Integer, index=True)
 class Services(Base):
     __tablename__ = 'Services'
     id = Column(Integer,primary_key=True,index=True)
@@ -27,7 +29,7 @@ class Services(Base):
     name = Column(types.TEXT,index=True)
     sum = Column(types.DOUBLE_PRECISION,index=True)
     time = Column(Integer,index=True)
-
+    user_id = Column(Integer, index=True)
 
 class Calendar(Base):
     __tablename__ = 'Calendar'
@@ -38,6 +40,13 @@ class Calendar(Base):
     date = Column(types.DATE,index=True)
     comments = Column(types.TEXT,index=True)
     time = Column(types.TIME,index=True)
+    user_id = Column(Integer,index = True)
 
-
+class Users(Base):
+    __tablename__ = 'Users'
+    id = Column(Integer,primary_key=True,index=True)
+    email = Column(types.TEXT,index=True)
+    password = Column(types.TEXT,index=True)
+    name = Column(types.TEXT,index=True)
+    surname = Column(types.TEXT,index=True)
 

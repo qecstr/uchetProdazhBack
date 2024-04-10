@@ -55,7 +55,10 @@ db_dependency = Annotated[Session, Depends(get_db)]
 async def create_finances(Finances: Finances, db: db_dependency):
     db_Finances = Models.Finances(date=Finances.date, operation_type=Finances.operation_type, sum=Finances.sum,
                                   sender=Finances.sender,
-                                  comment=Finances.comment, time = datetime.datetime.now().time().strftime('%H:%M'))
+                                  comment=Finances.comment,
+                                  time = datetime.datetime.now().time().strftime('%H:%M'),
+                                  user_id = Finances.user_id
+                                  )
     db.add(db_Finances)
     db.commit()
     db.refresh(db_Finances)
@@ -64,7 +67,8 @@ async def create_finances(Finances: Finances, db: db_dependency):
                                              Models.Finances.operation_type == Finances.operation_type,
                                              Models.Finances.sum == Finances.sum,
                                              Models.Finances.sender == Finances.sender,
-                                             Models.Finances.comment == Finances.comment
+                                             Models.Finances.comment == Finances.comment,
+                                             Models.Finances.user_id == Finances.user_id
                                              ).first()
 
 
@@ -76,9 +80,9 @@ async def get(id: int, db: db_dependency):
     return query
 
 
-@app.get("/financesAll")
-async def getAll(db: db_dependency):
-    query = db.query(Models.Finances).all()
+@app.get("/finances/getAll/{user_id}")
+async def getAll(db: db_dependency,user_id:int):
+    query = db.query(Models.Finances).filter(Models.Finances == user_id).all()
     return query
 @app.post("/financeUpdate/{id}")
 async def update(Finances: Finances ,db :db_dependency,id:int ):
@@ -121,12 +125,12 @@ class ConnectionManager:
                 await connection.send_json(temp)
 
 manager = ConnectionManager()
-@app.websocket("/finances/ws")
-async def websocket_endpoint(websocket: WebSocket,db:db_dependency):
+@app.websocket("/finances/ws/{user_id}")
+async def websocket_endpoint(websocket: WebSocket,db:db_dependency,user_id:int):
     await manager.connect(websocket)
 
     try:
-        listOfFinances = db.query(Models.Finances).all()
+        listOfFinances = db.query(Models.Finances).filter(Models.Finances.user_id == user_id).all()
         for finance in listOfFinances:
             temp = DTO(finance)
             await manager.broadcast(temp)
