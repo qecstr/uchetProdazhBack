@@ -31,6 +31,13 @@ class ZapisJson(BaseModel):
     comments: str
     time: datetime.time
 
+class ZapisJsonForCreate(BaseModel):
+    operation_type: str
+    name: str
+    sum: float
+    date: datetime.date
+    comments: str
+    time: datetime.time
 class CalendarJsonFinished(BaseModel):
     date: datetime.date
     Zapis: List[ZapisJson]

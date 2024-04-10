@@ -8,7 +8,7 @@ import app.crud as crud
 from app.Models import Services
 from app.database import SessionLocal
 from app.schemas import EmployeesJson
-from app.schemas import ZapisJson
+from app.schemas import ZapisJson, ZapisJsonForCreate
 from app.schemas import ServiceJson
 import app.crudCalendar as crudCalendar
 import app.crudServices as crudServices
@@ -43,13 +43,13 @@ async def deleteEmployee(id:int,db:db_dependency):
     return crud.delete(db,id)
 
 @router.post("/calendar/create")
-async def createCalendar(zapis:ZapisJson,db:db_dependency):
+async def createCalendar(zapis:ZapisJsonForCreate,db:db_dependency):
     return crudCalendar.create(zapis,db)
 @router.get("/calendar/getAll")
 async def getAllCalendar(db:db_dependency):
     return crudCalendar.getAll(db)
 @router.post("/calendar/update/{id}")
-async def updateCalendar(zapis:ZapisJson,db:db_dependency,id:int):
+async def updateCalendar(zapis:ZapisJsonForCreate,db:db_dependency,id:int):
     return crudCalendar.update(id,db,zapis)
 @router.delete("/calendar/delete/{id}")
 async def deleteCalendar(id:int,db:db_dependency):

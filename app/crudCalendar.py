@@ -1,12 +1,12 @@
 from sqlalchemy.orm import Session
-from app.schemas import ZapisJson, CalendarJsonFinished
+from app.schemas import ZapisJson, CalendarJsonFinished, ZapisJsonForCreate
 from app.Models import Calendar
 
 
 
 def getByid(id:int,db:Session):
     return db.query(Calendar).filter(Calendar.id == id).first()
-def create(zapis:ZapisJson,db:Session):
+def create(zapis:ZapisJsonForCreate,db:Session):
     db_emp = Calendar(
 
         operation_type = zapis.operation_type,
@@ -54,7 +54,7 @@ def getAll(db:Session):
             sortedResult.append(item)
     return sortedResult
 
-def update(id:int,db:Session,zapis:ZapisJson):
+def update(id:int,db:Session,zapis:ZapisJsonForCreate):
     temp = getByid(id, db)
     temp.operation_type = zapis.operation_type,
     temp.name = zapis.name,

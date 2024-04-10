@@ -121,7 +121,7 @@ async def websocket_endpoint(websocket: WebSocket,db:db_dependency):
     await manager.connect(websocket)
 
     while True:
-        query = db.query(Models.Finances).all().pop()
+        query = db.query(Models.Finances).all().pop(0)
         await manager.broadcast(query)
         while query is None:
             async with db as session:
