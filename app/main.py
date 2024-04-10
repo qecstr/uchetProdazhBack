@@ -112,8 +112,9 @@ class ConnectionManager:
 
         async def broadcast(self,finances:WebSocketFinancesJson):
             for connection in self.active_connections:
-
-                await connection.send_json(DTOtoJson(finances))
+                temp = json.dumps(DTOtoJson(finances))
+                print(temp)
+                await connection.send_json(temp)
 
 manager = ConnectionManager()
 @app.websocket("/finances/ws")
