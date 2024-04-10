@@ -114,6 +114,7 @@ class ConnectionManager:
             for connection in self.active_connections:
                 temp =DTOtoJson(finances)
                 print(temp)
+
                 await connection.send_json(temp)
 
 manager = ConnectionManager()
@@ -122,15 +123,15 @@ async def websocket_endpoint(websocket: WebSocket,db:db_dependency):
     await manager.connect(websocket)
     listOfFinances = db.query(Models.Finances).all()
     while True:
-        query = listOfFinances.pop(0)
-        temp  = DTO(query)
-        await manager.broadcast(temp)
+
         if query is None:
                 async with db as session:
                     result = await session.execute(select(Models.Finances))
                     items = result.scalars().all()
                     await manager.broadcast(items)
-
+        query = listOfFinances.pop(0)
+        temp = DTO(query)
+        await manager.broadcast(temp)
 
         await asyncio.sleep(1)
 
