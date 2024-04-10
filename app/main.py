@@ -124,7 +124,7 @@ async def websocket_endpoint(websocket: WebSocket,db:db_dependency):
     listOfFinances = db.query(Models.Finances).all()
     while True:
 
-        if query is None:
+        if listOfFinances is None:
                 async with db as session:
                     result = await session.execute(select(Models.Finances))
                     items = result.scalars().all()
