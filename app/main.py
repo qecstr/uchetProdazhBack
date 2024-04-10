@@ -136,7 +136,7 @@ async def websocket_endpoint(websocket: WebSocket,db:db_dependency):
             query = listOfFinances.pop(0)
             temp = DTO(query)
             await manager.broadcast(temp)
-
+        await manager.disconnect(websocket)
         await asyncio.sleep(1)
 
 
