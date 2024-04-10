@@ -157,4 +157,4 @@ def DTOtoJson(finances:WebSocketFinancesJson):
     }
     )
 
-    return data
+    return json.dumps(data)
