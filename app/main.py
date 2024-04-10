@@ -128,6 +128,7 @@ async def websocket_endpoint(websocket: WebSocket,db:db_dependency):
         for finance in listOfFinances:
             temp = DTO(finance)
             await manager.broadcast(temp)
+            await asyncio.sleep(1)
         while True:
             await websocket.receive_text()
     except WebSocketDisconnect:
