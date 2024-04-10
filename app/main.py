@@ -112,7 +112,7 @@ class ConnectionManager:
 
         async def broadcast(self,finances:WebSocketFinancesJson):
             for connection in self.active_connections:
-                temp = json.dumps(DTOtoJson(finances))
+                temp =DTOtoJson(finances)
                 print(temp)
                 await connection.send_json(temp)
 
@@ -126,7 +126,6 @@ async def websocket_endpoint(websocket: WebSocket,db:db_dependency):
         temp  = DTO(query)
         await manager.broadcast(temp)
         if query is None:
-            while query is None:
                 async with db as session:
                     result = await session.execute(select(Models.Finances))
                     items = result.scalars().all()
@@ -158,4 +157,4 @@ def DTOtoJson(finances:WebSocketFinancesJson):
     }
     )
 
-    return json.dumps(data)
+    return data
