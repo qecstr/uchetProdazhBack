@@ -83,7 +83,7 @@ async def get(id: int, db: db_dependency):
 
 @app.get("/finances/getAll/{user_id}")
 async def getAll(db: db_dependency,user_id:int):
-    query = db.query(Models.Finances).filter(Models.Finances == user_id).all()
+    query = db.query(Models.Finances).filter(Models.Finances.user_id == user_id).all()
     return query
 @app.post("/financeUpdate/{id}")
 async def update(Finances: Finances ,db :db_dependency,id:int ):
