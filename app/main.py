@@ -125,11 +125,10 @@ async def websocket_endpoint(websocket: WebSocket,db:db_dependency):
     listOfFinances = db.query(Models.Finances).all()
     try:
         while listOfFinances is not None:
-            if listOfFinances is None:
-                break
-            query = listOfFinances.pop(0)
-            temp = DTO(query)
-            await manager.broadcast(temp)
+            if listOfFinances is not None:
+                query = listOfFinances.pop(0)
+                temp = DTO(query)
+                await manager.broadcast(temp)
 
             await asyncio.sleep(1)
         while True:
