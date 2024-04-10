@@ -129,9 +129,10 @@ async def websocket_endpoint(websocket: WebSocket,db:db_dependency):
                     result = await session.execute(select(Models.Finances))
                     items = result.scalars().all()
                     await manager.broadcast(items)
-        query = listOfFinances.pop(0)
-        temp = DTO(query)
-        await manager.broadcast(temp)
+        else:
+            query = listOfFinances.pop(0)
+            temp = DTO(query)
+            await manager.broadcast(temp)
 
         await asyncio.sleep(1)
 
