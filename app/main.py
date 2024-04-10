@@ -72,7 +72,7 @@ async def create_finances(Finances: Finances, db: db_dependency):
 async def get(id: int, db: db_dependency):
 
     query = db.query(Models.Finances).filter(Models.Finances.id == id).first()
-
+    print(datetime.datetime.now())
     return query
 
 
