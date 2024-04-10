@@ -123,6 +123,8 @@ async def websocket_endpoint(websocket: WebSocket,db:db_dependency):
     await manager.connect(websocket)
     listOfFinances = db.query(Models.Finances).all()
     while listOfFinances is not None:
+        if listOfFinances is None:
+            break
         query = listOfFinances.pop(0)
         temp = DTO(query)
         await manager.broadcast(temp)
