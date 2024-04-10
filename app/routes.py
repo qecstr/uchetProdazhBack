@@ -49,9 +49,9 @@ async def deleteEmployee(id:int,db:db_dependency):
 @router.post("/calendar/create")
 async def createCalendar(zapis:ZapisJsonForCreate,db:db_dependency):
     return crudCalendar.create(zapis,db)
-@router.get("/calendar/getAll")
-async def getAllCalendar(db:db_dependency):
-    return crudCalendar.getAll(db)
+@router.get("/calendar/getAll/{user_id}")
+async def getAllCalendar(db:db_dependency,user_id:int):
+    return crudCalendar.getAll(db,user_id)
 @router.post("/calendar/update/{id}")
 async def updateCalendar(zapis:ZapisJsonForCreate,db:db_dependency,id:int):
     return crudCalendar.update(id,db,zapis)
@@ -60,8 +60,8 @@ async def deleteCalendar(id:int,db:db_dependency):
     return crudCalendar.delete(id,db)
 
 @router.get("/services/getAll/{user_id}")
-async def getAllServices(db:db_dependency):
-    return crudServices.getAll(db)
+async def getAllServices(db:db_dependency,user_id:int):
+    return crudServices.getAll(db,user_id)
 @router.post("/services/update/{service_id}/")
 async def updateServices(services:ServiceJson, db:db_dependency, service_id:int):
     return crudServices.updateService(services, db,service_id)
