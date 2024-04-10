@@ -122,15 +122,12 @@ manager = ConnectionManager()
 @app.websocket("/finances/ws")
 async def websocket_endpoint(websocket: WebSocket,db:db_dependency):
     await manager.connect(websocket)
-    listOfFinances = db.query(Models.Finances).all()
-    try:
-        while listOfFinances is not None:
-            if listOfFinances is not None:
-                query = listOfFinances.pop(0)
-                temp = DTO(query)
-                await manager.broadcast(temp)
 
-            await asyncio.sleep(1)
+    try:
+        listOfFinances = db.query(Models.Finances).all()
+        for finance in listOfFinances:
+            temp = DTO(finance)
+            await manager.broadcast(temp)
         while True:
             await websocket.receive_text()
     except WebSocketDisconnect:
