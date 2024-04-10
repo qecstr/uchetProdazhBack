@@ -42,4 +42,12 @@ class CalendarJsonFinished(BaseModel):
     date: datetime.date
     Zapis: List[ZapisJson]
 
+class WebSocketFinancesJson(BaseModel):
+    date: datetime.date
+    operation_type: str
+    sum: float
+    sender: str
+    comment: str
+    time: datetime.time
+
 

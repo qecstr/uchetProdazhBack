@@ -12,12 +12,14 @@ class Finances(Base):
     sum = Column(types.DOUBLE_PRECISION, index=True)
     sender = Column(types.TEXT, index=True)
     comment = Column(types.TEXT, index=True)
+    time = Column(types.TIME,index = True)
 class Employees(Base):
     __tablename__ = 'Employees'
     id = Column(Integer,primary_key=True,index=True)
     name = Column(types.TEXT,index = True)
     surname = Column(types.TEXT,index = True)
     speciality = Column(types.TEXT,index=True)
+    time = Column(types.TIME, index=True)
 class Services(Base):
     __tablename__ = 'Services'
     id = Column(Integer,primary_key=True,index=True)
@@ -25,6 +27,7 @@ class Services(Base):
     name = Column(types.TEXT,index=True)
     sum = Column(types.DOUBLE_PRECISION,index=True)
     time = Column(Integer,index=True)
+
 
 class Calendar(Base):
     __tablename__ = 'Calendar'

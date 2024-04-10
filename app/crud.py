@@ -33,3 +33,7 @@ def delete(db :Session,id:int):
     query = getByid(id,db)
     db.delete(query)
     db.commit()
+
+
+
+

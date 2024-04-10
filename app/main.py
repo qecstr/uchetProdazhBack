@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 import datetime
 from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
-
+from app.schemas import WebSocketFinancesJson
 app = FastAPI()
 Models.Base.metadata.create_all(bind=engine)
 finances = sql.Table('Finances', sql.MetaData(), autoload_with=engine)
@@ -53,7 +53,7 @@ db_dependency = Annotated[Session, Depends(get_db)]
 async def create_finances(Finances: Finances, db: db_dependency):
     db_Finances = Models.Finances(date=Finances.date, operation_type=Finances.operation_type, sum=Finances.sum,
                                   sender=Finances.sender,
-                                  comment=Finances.comment)
+                                  comment=Finances.comment, time = datetime.datetime.now().time())
     db.add(db_Finances)
     db.commit()
     db.refresh(db_Finances)
@@ -110,27 +110,38 @@ class ConnectionManager:
             self.active_connections.remove(websocket)
 
 
-        async def broadcast(self,finances:Models.Finances):
+        async def broadcast(self,finances:WebSocketFinancesJson):
             for connection in self.active_connections:
-                timestamp = datetime.datetime.now().isoformat()
-                await connection.send_json({"date":timestamp ,"sum":finances.sum})
+
+                await connection.send_json(finances)
 
 manager = ConnectionManager()
 @app.websocket("/finances/ws")
 async def websocket_endpoint(websocket: WebSocket,db:db_dependency):
     await manager.connect(websocket)
-
+    listOfFinances = db.query(Models.Finances).all()
     while True:
-        query = db.query(Models.Finances).all().pop(0)
-        await manager.broadcast(query)
-        while query is None:
-            async with db as session:
-                result = await session.execute(select(Models.Finances))
-                items = result.scalars().all()
-                await manager.broadcast(items)
+        query = listOfFinances.pop(0)
+        temp  = DTO(query)
+        await manager.broadcast(temp)
+        if query is None:
+            while query is None:
+                async with db as session:
+                    result = await session.execute(select(Models.Finances))
+                    items = result.scalars().all()
+                    await manager.broadcast(items)
 
 
         await asyncio.sleep(1)
 
 
-
+def DTO(finances:Models.Finances)->WebSocketFinancesJson:
+    temp = WebSocketFinancesJson(
+        date = finances.date,
+        operation_type = finances.operation_type,
+        sum = finances.sum,
+        sender = finances.sender,
+        comment =  finances.comment,
+        time = finances.time
+    )
+    return temp
