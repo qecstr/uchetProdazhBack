@@ -138,6 +138,7 @@ async def websocket_endpoint(websocket: WebSocket,db:db_dependency):
 def after_data_insert(mapper, connection, target):
     new_data = target
     print(DTOtoJson(DTO(new_data)))
+
     manager.broadcast(DTO(new_data))
 def DTO(finances:Models.Finances)->WebSocketFinancesJson:
     temp = WebSocketFinancesJson(
