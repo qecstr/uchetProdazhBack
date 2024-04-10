@@ -123,22 +123,25 @@ async def websocket_endpoint(websocket: WebSocket,db:db_dependency):
     await manager.connect(websocket)
     listOfFinances = db.query(Models.Finances).all()
     while True:
-
         if listOfFinances is None:
-            while True:
-                async with db as session:
-                    result = await session.execute(select(Models.Finances))
-                    items = result.scalars().all()
-
-                    await manager.broadcast(DTO(items))
-                    await asyncio.sleep(1)
+            break
         else:
             query = listOfFinances.pop(0)
             temp = DTO(query)
             await manager.broadcast(temp)
-        await manager.disconnect(websocket)
+
         await asyncio.sleep(1)
 
+
+    while True:
+        async with db as session:
+            result = await session.execute(select(Models.Finances))
+            items = result.scalars().all()
+
+            await manager.broadcast(DTO(items))
+            await asyncio.sleep(1)
+
+    await manager.disconnect(websocket)
 
 def DTO(finances:Models.Finances)->WebSocketFinancesJson:
     temp = WebSocketFinancesJson(
