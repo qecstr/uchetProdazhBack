@@ -64,5 +64,5 @@ class authUser(BaseModel):
     password:str
 class userView(BaseModel):
     id:int
-    email:str
-    password:str
+    name:str
+    surname:str
