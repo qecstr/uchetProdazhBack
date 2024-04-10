@@ -1,7 +1,7 @@
 
 from sqlalchemy.orm import Session
 from app.schemas import usersRegJson
-from app.schemas import authUser
+from app.schemas import authUser, userView
 from app.Models import Users
 
 def create_user(users:usersRegJson,db: Session):
@@ -18,7 +18,12 @@ def create_user(users:usersRegJson,db: Session):
 
 def findUser(users:authUser,db: Session):
     query = db.query(Users).filter(Users.email == users.email,Users.password ==users.password).first()
-    return query.id
+    temp = userView(
+        id = query.id,
+        name = query.name,
+        surname = query.surname
+    )
+    return temp
 def authenticate_user(users:authUser,db: Session):
     email = validate_email(users.email,db)
     password = validate_password(users.password,db)

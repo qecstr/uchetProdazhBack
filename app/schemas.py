@@ -62,4 +62,7 @@ class usersRegJson(BaseModel):
 class authUser(BaseModel):
     email:str
     password:str
-
+class userView(BaseModel):
+    id:int
+    email:str
+    password:str
