@@ -37,6 +37,7 @@ class Finances(BaseModel):
     sum: float
     sender: str
     comment: str
+    user_id: int
 
 
 
