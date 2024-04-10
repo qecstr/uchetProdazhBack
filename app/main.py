@@ -6,6 +6,7 @@ from fastapi.responses import HTMLResponse
 import sqlalchemy as sql
 from fastapi import FastAPI, Depends, WebSocket, WebSocketDisconnect
 from fastapi.openapi.models import Response
+from sqlalchemy.event import listens_for
 from sqlalchemy.future import select
 from pydantic import BaseModel
 
@@ -122,24 +123,25 @@ manager = ConnectionManager()
 async def websocket_endpoint(websocket: WebSocket,db:db_dependency):
     await manager.connect(websocket)
     listOfFinances = db.query(Models.Finances).all()
-    while listOfFinances is not None:
-        if listOfFinances is None:
-            break
-        query = listOfFinances.pop(0)
-        temp = DTO(query)
-        await manager.broadcast(temp)
+    try:
+        while listOfFinances is not None:
+            if listOfFinances is None:
+                break
+            query = listOfFinances.pop(0)
+            temp = DTO(query)
+            await manager.broadcast(temp)
 
-        await asyncio.sleep(1)
-
-    while listOfFinances is None:
-        async with db as session:
-            result = await session.execute(select(Models.Finances))
-            items = result.scalars().all()
-
-            await manager.broadcast(DTO(items))
             await asyncio.sleep(1)
-    await manager.disconnect(websocket)
+        while True:
+            await websocket.receive_text()
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
 
+@listens_for(Models.Finances, "after_insert")
+def after_data_insert(mapper, connection, target):
+    new_data = target.content
+
+    manager.broadcast(DTO(new_data))
 def DTO(finances:Models.Finances)->WebSocketFinancesJson:
     temp = WebSocketFinancesJson(
         date = finances.date,
