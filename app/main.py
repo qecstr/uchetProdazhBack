@@ -26,9 +26,9 @@ finances = sql.Table('Finances', sql.MetaData(), autoload_with=engine)
 app.include_router(router, prefix="", tags=[""])
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["185.5.206.50:5000","localhost:5000"],
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=['GET','POST','DELETE'],
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 class Finances(BaseModel):
