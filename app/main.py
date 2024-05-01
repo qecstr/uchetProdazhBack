@@ -106,7 +106,10 @@ async def delete(db: db_dependency,id:int ):
     db.commit()
 
 
-
+class currentUser:
+    def __init__(self): self.user_id = 0
+    def set_id(self,user_id): self.user_id = user_id
+    def get_id(self): return self.user_id
 
 class ConnectionManager:
         def __init__(self):
@@ -128,10 +131,11 @@ class ConnectionManager:
                 await connection.send_json(temp)
 
 manager = ConnectionManager()
+currentUser = currentUser()
 @app.websocket("/finances/ws/{user_id}")
 async def websocket_endpoint(websocket: WebSocket,db:db_dependency,user_id:int):
     await manager.connect(websocket)
-
+    currentUser.set_id(user_id)
     try:
         listOfFinances = db.query(Models.Finances).filter(Models.Finances.user_id == user_id).all()
         for finance in listOfFinances:
@@ -139,19 +143,21 @@ async def websocket_endpoint(websocket: WebSocket,db:db_dependency,user_id:int):
             await manager.broadcast(temp)
             await asyncio.sleep(1)
         while True:
-            after_data_insert(user_id = user_id)
             await websocket.receive_text()
 
     except WebSocketDisconnect:
         manager.disconnect(websocket)
 
 @event.listens_for(Models.Finances, "after_insert")
-async def after_data_insert(mapper, connection, target,user_id:int):
+async def after_data_insert(mapper, connection, target):
     new_data = target
-
+    user_id = currentUser.get_id()
     await asyncio.sleep(3)
     if(new_data.user_id == user_id):
         await manager.broadcast(DTO(new_data))
+
+
+
 
 def DTO(finances:Models.Finances)->WebSocketFinancesJson:
     temp = WebSocketFinancesJson(
