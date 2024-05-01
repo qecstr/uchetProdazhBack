@@ -140,14 +140,18 @@ async def websocket_endpoint(websocket: WebSocket,db:db_dependency,user_id:int):
             await asyncio.sleep(1)
         while True:
             await websocket.receive_text()
+            await manager.broadcast(after_data_insert(user_id = user_id))
     except WebSocketDisconnect:
         manager.disconnect(websocket)
 
 @event.listens_for(Models.Finances, "after_insert")
-async def after_data_insert(mapper, connection, target):
+async def after_data_insert(mapper, connection, target,user_id:int):
     new_data = target
+
     await asyncio.sleep(3)
-    await manager.broadcast(DTO(new_data))
+    if(new_data.user_id == user_id):
+        return DTO(new_data)
+
 def DTO(finances:Models.Finances)->WebSocketFinancesJson:
     temp = WebSocketFinancesJson(
         date = finances.date,
