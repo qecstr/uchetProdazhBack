@@ -123,7 +123,7 @@ class ConnectionManager:
         async def broadcast(self,finances:WebSocketFinancesJson):
             for connection in self.active_connections:
                 temp =DTOtoJson(finances)
-                print(temp)
+
 
                 await connection.send_json(temp)
 
@@ -146,7 +146,6 @@ async def websocket_endpoint(websocket: WebSocket,db:db_dependency,user_id:int):
 @event.listens_for(Models.Finances, "after_insert")
 async def after_data_insert(mapper, connection, target):
     new_data = target
-    print(DTOtoJson(DTO(new_data)))
     await asyncio.sleep(3)
     await manager.broadcast(DTO(new_data))
 def DTO(finances:Models.Finances)->WebSocketFinancesJson:

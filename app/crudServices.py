@@ -8,7 +8,11 @@ def getAll(db: Session,user_id:int):
     return db.query(Services).filter(Services.user_id == user_id).all()
 
 def createService(json:ServiceJson,db: Session):
-    service = Services(name = json.name,sum = json.sum,operation_type = json.operation_type,time = json.time,user_id = json.user_id)
+    service = Services(name = json.name,
+                       sum = json.sum,
+                       operation_type = json.operation_type,
+                       time = json.time,
+                       user_id = json.user_id)
     db.add(service)
     db.commit()
     db.refresh(service)
